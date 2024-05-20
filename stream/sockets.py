@@ -66,4 +66,4 @@ def receive():
    return render_template("receive.html")
 
 if __name__ == "__main__":
-   socketio.run(app, debug = True, port = 5000, host = '0.0.0.0', allow_unsafe_werkzeug=True)
+   socketio.run(app, debug = True, port = 5000, host = '0.0.0.0')
