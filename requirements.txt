@@ -17,3 +17,4 @@ Werkzeug==2.0.3
 wsproto==1.2.0
 eventlet
 gevent
+requests
