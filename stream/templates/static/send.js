@@ -1,0 +1,40 @@
+var socket = io.connect(
+   {autoConnect: false}
+);
+
+socket.on("connect", function() {
+   console.log("Connected...!", socket.connected);
+});
+
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+const video = document.querySelector("#videoElement");
+video.width = 400;
+video.height = 300;
+
+if (navigator.mediaDevices.getUserMedia) {
+   navigator.mediaDevices.getUserMedia({
+         video: true
+      })
+      .then(function(stream) {
+         video.srcObject = stream;
+         video.play();
+      })
+      .catch(function(error) {});
+}
+
+const FPS = 10;
+setInterval(() => {
+   console.log("setInterval");
+   width = video.width;
+   height = video.height;
+   context.drawImage(video, 0, 0, width, height);
+   var data = canvas.toDataURL("image/jpeg", 0.5);
+   console.log(data);
+   context.clearRect(0, 0, width, height);
+   socket.emit("image", data);
+}, 1000 / FPS);
+
+socket.on("disconnect", function() {
+   console.log("Disconnected...!", socket.connected);
+});
