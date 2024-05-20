@@ -23,14 +23,14 @@ def base64_to_image(base64_string):
     image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     return image
 
-@socketio.on("connect", namespace = '/send')
+@socketio.on("connect")
 def handle_connect():
     print("Connected")
     emit("my response", {
        "data": "Connected"
     })
 
-@socketio.on("disconnect", namespace = '/send')
+@socketio.on("disconnect")
 def handle_disconnect():
     print("Disconnected")
     # emit("my response", {
