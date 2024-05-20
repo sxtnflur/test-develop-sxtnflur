@@ -1,40 +1,38 @@
-var socket = io.connect(
-   {autoConnect: false}
-);
+document.addEventListener("DOMContentLoaded", function() {
+    const socket = io.connect({ autoConnect: false });
 
-socket.on("connect", function() {
-   console.log("Connected...!", socket.connected);
-});
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                const video = document.querySelector("#videoElement");
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch((error) => {
+                console.error("Error accessing camera:", error);
+            });
+    }
 
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-const video = document.querySelector("#videoElement");
-video.width = 400;
-video.height = 300;
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
 
-if (navigator.mediaDevices.getUserMedia) {
-   navigator.mediaDevices.getUserMedia({
-         video: true
-      })
-      .then(function(stream) {
-         video.srcObject = stream;
-         video.play();
-      })
-      .catch(function(error) {});
-}
+    const FPS = 10;
+    setInterval(() => {
+        const video = document.querySelector("#videoElement");
+        const width = canvas.width;
+        const height = canvas.height;
+        context.drawImage(video, 0, 0, width, height);
+        const data = canvas.toDataURL("image/jpeg", 0.5);
+        context.clearRect(0, 0, width, height);
+        socket.emit("image", data);
+    }, 1000 / FPS);
 
-const FPS = 10;
-setInterval(() => {
-   console.log("setInterval");
-   width = video.width;
-   height = video.height;
-   context.drawImage(video, 0, 0, width, height);
-   var data = canvas.toDataURL("image/jpeg", 0.5);
-   console.log(data);
-   context.clearRect(0, 0, width, height);
-   io.sockets.emit("image", data);
-}, 1000 / FPS);
+//    socket.on("processed_image", (image) => {
+//        console.log("processed_image");
+//        console.log(image);
+//        const photo = document.getElementById("photo");
+//        photo.setAttribute("src", image);
+//    });
 
-socket.on("disconnect", function() {
-   console.log("Disconnected...!", socket.connected);
+    socket.connect();
 });

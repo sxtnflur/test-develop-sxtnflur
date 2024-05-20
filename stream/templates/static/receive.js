@@ -1,17 +1,10 @@
-var socket = io.connect(
-   {autoConnect: false}
-);
+document.addEventListener("DOMContentLoaded", function() {
+    const socket = io.connect({ autoConnect: false });
 
-socket.on("connect", function() {
-   console.log("Connected...!", socket.connected);
-});
+    socket.on("processed_image", (image) => {
+        const photo = document.getElementById("photo");
+        photo.setAttribute("src", image);
+    });
 
-socket.on("processed_image", function(image) {
-    console.log("processed_image");
-    console.log(image);
-    photo.setAttribute("src", image);
-});
-
-socket.on("disconnect", function() {
-   console.log("Disconnected...!", socket.connected);
+    socket.connect();
 });
