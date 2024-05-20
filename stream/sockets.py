@@ -59,13 +59,13 @@ def receive_image(image):
     print(processed_img_data)
     emit("processed_image", processed_img_data)
 
-@app.route("/send")
-def send():
-   return render_template("send.html")
+@app.route("/")
+def index():
+   return render_template("index.html")
 
-@app.route("/receive")
-def receive():
-   return render_template("receive.html")
+# @app.route("/receive")
+# def receive():
+#    return render_template("receive.html")
 
 if __name__ == "__main__":
    socketio.run(app, debug = True, port = 5000, host = '0.0.0.0')
