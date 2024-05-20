@@ -18,3 +18,4 @@ wsproto==1.2.0
 eventlet
 gevent
 requests
+flask-cors
