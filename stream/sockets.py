@@ -11,10 +11,10 @@ from utils import send_error_msg
 app = Flask(__name__, static_folder = "./templates/static")
 
 app.config["SECRET_KEY"] = "secret!"
+cors = CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'])
+socketio = SocketIO(app, cors_allowed_origins='*')
 # app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 # app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-socketio = SocketIO(app)
 
 def base64_to_image(base64_string):
     base64_data = base64_string.split(",")[1]
