@@ -39,24 +39,24 @@ def handle_disconnect():
 
 @socketio.on("image")
 def receive_image(image):
-    print('start image')
-    print(image)
+    send_error_msg('image:')
+    send_error_msg(image)
     image = base64_to_image(image)
-    print(image)
+    send_error_msg(image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    print(gray)
+    send_error_msg(gray)
     frame_resized = cv2.resize(gray, (640, 360))
-    print(frame_resized)
+    send_error_msg(frame_resized)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
-    print(encode_param)
+    send_error_msg(encode_param)
     result, frame_encoded = cv2.imencode(".jpg", frame_resized, encode_param)
-    print(result)
-    print(frame_encoded)
+    send_error_msg(result)
+    send_error_msg(frame_encoded)
     processed_img_data = base64.b64encode(frame_encoded).decode()
-    print(processed_img_data)
+    send_error_msg(processed_img_data)
     b64_src = "data:image/jpg;base64,"
     processed_img_data = b64_src + processed_img_data
-    print(processed_img_data)
+    send_error_msg(processed_img_data)
     emit("processed_image", processed_img_data)
 
 @app.route("/")
