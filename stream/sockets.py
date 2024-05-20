@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 from flask import Flask, render_template, send_from_directory
+from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 # from PSN_bot.backend.app import app
 
