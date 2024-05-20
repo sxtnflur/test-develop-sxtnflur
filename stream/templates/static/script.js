@@ -1,5 +1,5 @@
 var socket = io.connect(
-   "ws:" + "//" + document.domain + ":" + location.port
+   {autoConnect: false}
 );
 
 socket.on("connect", function() {
