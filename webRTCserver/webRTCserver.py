@@ -3,6 +3,7 @@ import socketio
 import eventlet
 import eventlet.wsgi
 import datetime
+from flask_cors import CORS
 
 sio = socketio.Server()
 app = Flask(__name__)
