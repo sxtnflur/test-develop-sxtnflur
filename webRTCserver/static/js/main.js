@@ -107,7 +107,9 @@ navigator.mediaDevices.getUserMedia({
 
 function gotStream(stream) {
   console.log('Adding local stream.');
+  console.log(stream)
   localVideo.src = stream.url;
+  console.log(localVideo)
   localStream = stream;
   sendMessage('got user media');
   if (isInitiator) {
