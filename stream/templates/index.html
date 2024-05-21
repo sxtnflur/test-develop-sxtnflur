@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Image Processing</title>
+    <title>{{ room }}</title>
     <style>
         #video {
             transform: rotateY(180deg);
@@ -16,7 +16,7 @@
 <body>
     <div id="app">
         <div id="container">
-            <video autoplay playsinline id="videoElement"></video>
+            <video autoplay playsinline id="{{ is_translator }}"></video>
             <canvas id="canvas" width="400" height="300" style="display: none;"></canvas>
         </div>
         <img id="photo" width="400" height="300">
