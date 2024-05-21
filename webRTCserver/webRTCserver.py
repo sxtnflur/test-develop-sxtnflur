@@ -23,19 +23,18 @@ def index():
 
 @sio.on('message', namespace='/')
 def messgage(sid, data):
-    write_log('message')
     sio.emit('message', data=data)
 
 @sio.on('disconnect', namespace='/')
 def disconnect(sid):
-    write_log("Received Disconnect message from %s" % sid)
+    # write_log("Received Disconnect message from %s" % sid)
     for room, clients in connected_particpants.iteritems():
         try:
             clients.remove(sid)
-            write_log("Removed %s from %s \n list of left participants is %s" %(sid, room, clients))
+            # write_log("Removed %s from %s \n list of left participants is %s" %(sid, room, clients))
         except ValueError:
-            write_log("Remove %s from %s \n list of left participants is %s has failed" %(sid, room, clients))
-
+            # write_log("Remove %s from %s \n list of left participants is %s has failed" %(sid, room, clients))
+            pass
 @sio.on('create_or_join', namespace='/')
 def create_or_join(sid, data):
     # sio.emit('created', data)
