@@ -98,7 +98,6 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
 navigator.mediaDevices.getUserMedia({
-  audio: true,
   video: true
 })
 .then(gotStream)
