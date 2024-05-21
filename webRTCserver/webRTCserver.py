@@ -52,16 +52,17 @@ def create_or_join(sid, data):
         connected_particpants[room].append(sid)
     except KeyError:
         connected_particpants[room] = [sid]
+    print(connected_particpants)
 
     numClients = len(connected_particpants[room])
 
     if numClients == 1:
-        sio.emit('created', room)
+        sio.emit('created', room, broadcast=True)
     elif numClients > 2:
-        sio.emit('full')
+        sio.emit('full', broadcast=True)
     else:
-        sio.emit('joined')
-        sio.emit('join')
+        sio.emit('joined', room, broadcast=True)
+        sio.emit('join', room, broadcast=True)
     print(sid, room, len(connected_particpants[room]))
 
 @app.route('/<room>/<user_id>')

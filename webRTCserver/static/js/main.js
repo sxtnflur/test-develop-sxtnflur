@@ -11,11 +11,16 @@ document.addEventListener("DOMContentLoaded", function() {
     var sendChannel;
     var sendText = document.querySelector("#text");
     var chatlog = document.querySelector('#chatlog');
+    var sendTextBtn = document.querySelector('#sendText');
+
 
     var pcConfig = {
-      'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-      }]
+        optional: [{
+    RtpDataChannels: true
+  }]
+//      'iceServers': [{
+//        'urls': 'stun:stun.l.google.com:19302'
+//      }]
     };
 
     // Set up audio and video regardless of what devices are present.
@@ -51,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     socket.on('join', function (room){
+      console.log(room)
       console.log('Another peer made a request to join room ' + room);
       console.log('This peer is the initiator of room ' + room + '!');
       isChannelReady = true;
@@ -76,22 +82,27 @@ document.addEventListener("DOMContentLoaded", function() {
     socket.on('message', function(message) {
       console.log('Client received message:', message);
       if (message === 'got user media') {
+        console.log('received 1')
         maybeStart();
       } else if (message.type === 'offer') {
+        console.log('received 2')
         if (!isInitiator && !isStarted) {
           maybeStart();
         }
         pc.setRemoteDescription(new RTCSessionDescription(message));
         doAnswer();
       } else if (message.type === 'answer' && isStarted) {
+        console.log('received 3')
         pc.setRemoteDescription(new RTCSessionDescription(message));
       } else if (message.type === 'candidate' && isStarted) {
+        console.log('received 4')
         var candidate = new RTCIceCandidate({
           sdpMLineIndex: message.label,
           candidate: message.candidate
         });
         pc.addIceCandidate(candidate);
       } else if (message === 'bye' && isStarted) {
+        console.log('received 5')
         handleRemoteHangup();
       }
     });
@@ -142,6 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log('>>>>>> creating peer connection');
         createPeerConnection();
         pc.addStream(localStream);
+        console.log(pc);
         isStarted = true;
         console.log('isInitiator', isInitiator);
         if (isInitiator) {
@@ -155,16 +167,31 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log("sending disconnect")
     };
 
+
     /////////////////////////////////////////////////////////
 
     function createPeerConnection() {
+        console.log("start createPeerConnection");
       try {
         pc = new RTCPeerConnection(pcConfig);
-        sendChannel = pc.createDataChannel('chat', null);
+        console.log(pc);
+        sendChannel = pc.createDataChannel('chat', {
+            reliable: false
+        });
         pc.onicecandidate = handleIceCandidate;
         pc.onaddstream = handleRemoteStreamAdded;
         pc.onremovestream = handleRemoteStreamRemoved;
         pc.ondatachannel = handleChannelCallback;
+        pc.onnegotiationneeded = function() {
+          pc.createOffer(setLocalAndSendMessage);
+        };
+        sendChannel.onopen = function(event) {
+          var readyState = sendChannel.readyState;
+          if (readyState == "open") {
+            sendChannel.send("Hello");
+          }
+        };
+        console.log(pc);
 
         console.log('Created RTCPeerConnnection');
       } catch (e) {
@@ -174,9 +201,15 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
 
+
+
+
+
     function handleChannelCallback(event) {
+      alert(event.data);
       receiveChannel = event.channel;
       receiveChannel.onmessage = onReceiveMessageCallback;
+
     }
 
     function onReceiveMessageCallback(event) {
@@ -189,29 +222,35 @@ document.addEventListener("DOMContentLoaded", function() {
     function handleIceCandidate(event) {
       console.log('icecandidate event: ', event);
       if (event.candidate) {
-        sendMessage({
-          type: 'candidate',
-          label: event.candidate.sdpMLineIndex,
-          id: event.candidate.sdpMid,
-          candidate: event.candidate.candidate
-        });
-      } else {
-        console.log('End of candidates.');
-      }
+    remotePeerConnection.addIceCandidate(event.candidate);
+  };
+//      if (event.candidate) {
+//        sendMessage({
+//          type: 'candidate',
+//          label: event.candidate.sdpMLineIndex,
+//          id: event.candidate.sdpMid,
+//          candidate: event.candidate.candidate
+//        });
+//      } else {
+//        console.log('End of candidates.');
+//      }
     }
 
-    function sendData() {
+    sendTextBtn.onclick = function sendData() {
       var text = document.createElement("P");
       text.appendChild(document.createTextNode(sendText.value));
       chatlog.appendChild(text);
+      console.log(sendChannel);
+      console.log(sendText.value);
       sendChannel.send(sendText.value);
       sendText.value = '';
     }
 
     function handleRemoteStreamAdded(event) {
       console.log('Remote stream added.');
-      remoteVideo.src = window.URL.createObjectURL(event.stream);
-      remoteStream = event.stream;
+//      remoteVideo.src = window.URL.createObjectURL(event.stream);
+//      remoteVideo.srcObject = event.stream;
+//      remoteStream = event.stream;
     }
 
     function handleCreateOfferError(event) {
@@ -272,11 +311,11 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
 
-    function handleRemoteStreamAdded(event) {
-      console.log('Remote stream added.');
-      remoteVideo.src = window.URL.createObjectURL(event.stream);
-      remoteStream = event.stream;
-    }
+//    function handleRemoteStreamAdded(event) {
+//      console.log('Remote stream added.');
+//      remoteVideo.src = window.URL.createObjectURL(event.stream);
+//      remoteStream = event.stream;
+//    }
 
     function handleRemoteStreamRemoved(event) {
       console.log('Remote stream removed. Event: ', event);
@@ -379,5 +418,30 @@ document.addEventListener("DOMContentLoaded", function() {
       sdpLines[mLineIndex] = mLineElements.join(' ');
       return sdpLines;
     }
-    socket.connect();
+
+    function sendMessage(message){
+  socket.emit('message', message);
+}
+    function attachMediaStream(element, stream) {
+    console.log('DEPRECATED, attachMediaStream will soon be removed.');
+    element.srcObject = stream;
+    element = stream;
+  }
+
+    function handleUserMedia(stream) {
+        localStream = stream;
+
+        attachMediaStream(localVideo, stream);
+        sendMessage('got user media');
+}
+    function handleUserMediaError(stream) {
+        console.log("error handle")
+    }
+
+    var AddVideoButton = document.querySelector('#addVideo');
+    AddVideoButton.onclick = function() {
+        navigator.getUserMedia(constraints, handleUserMedia, handleUserMediaError);
+    };
+
+socket.connect();
 });
