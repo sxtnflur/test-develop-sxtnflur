@@ -6,6 +6,8 @@ import datetime
 
 sio = socketio.Server()
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "secret!"
+cors = CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'])
 
 connected_particpants = {}
 
