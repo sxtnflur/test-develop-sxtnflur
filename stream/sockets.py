@@ -7,7 +7,6 @@ import numpy as np
 from flask import Flask, render_template, send_from_directory, redirect
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_cors import CORS
-from utils import send_error_msg
 from flask import session
 
 app = Flask(__name__, static_folder = "./templates/static")
