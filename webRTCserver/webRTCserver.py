@@ -28,7 +28,7 @@ def messgage(sid, data):
 @sio.on('disconnect', namespace='/')
 def disconnect(sid):
     # write_log("Received Disconnect message from %s" % sid)
-    for room, clients in connected_particpants.iteritems():
+    for room, clients in connected_particpants.items():
         try:
             clients.remove(sid)
             # write_log("Removed %s from %s \n list of left participants is %s" %(sid, room, clients))
