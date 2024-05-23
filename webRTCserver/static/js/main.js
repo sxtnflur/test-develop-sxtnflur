@@ -32,7 +32,7 @@ offerToReceiveVideo: true
 // Could prompt for room name:
 // var room = prompt('Enter room name:');
 
-var socket = io.connect({ autoConnect: false });
+var socket = io({transports: ['websocket', 'polling', 'flashsocket']});
 
 if (room !== '') {
 socket.emit('create or join', room);
