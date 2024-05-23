@@ -9,11 +9,16 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
   <link rel="shortcut icon" href="#">
 </head>
+<body>
 <script type="text/javascript">
   var room = '{{room}}';
-  var user_id = {{user_id}};
+  var user_id = '{{user_id}}';
 </script>
-<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<!--<script type="text/javascript">-->
+<script src="{{url_for('static', filename='js/main.js')}}"></script>
+
 
   <h1>Realtime communication with WebRTC</h1>
 
@@ -26,10 +31,9 @@
   <textarea id="text" name="text"></textarea>
   <button id="sendText">Send</button>
 
-  <script src="{{url_for('static', filename='js/lib/socket.io.js')}}"></script>
-  <script src="{{url_for('static', filename='js/lib/adapter.js')}}"></script>
-  <script src="{{url_for('static', filename='js/main.js')}}"></script>
-
+<!--  <script src="{{url_for('static', filename='js/lib/socket.io.js')}}"></script>-->
+<!--  <script src="{{url_for('static', filename='js/lib/adapter.js')}}"></script>-->
 </body>
+
 
 </html>
