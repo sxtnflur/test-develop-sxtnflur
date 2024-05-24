@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebRTC working example</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+    <video id="remoteStream" autoplay playsinline></video>
+    <video id="localStream" autoplay playsinline></video>
+    <script>
+        var room = '{{ room }}';
+    </script>
+    <script src="{{ url_for('static', filename='socket.io.js')}}"></script>
+    <script src="{{ url_for('static', filename='main.js')}}"></script>
+    <button id="toggleMic" type="button" alt="Toggle mic status" class="muted" onclick="toggleMic()">Mic</button>
+</body>
+</html>
